@@ -1,0 +1,1 @@
+This package used for get assets data

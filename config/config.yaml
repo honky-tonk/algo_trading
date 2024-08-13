@@ -1,0 +1,10 @@
+Stock_Datas:
+  - Name: "NVDA"  
+    Start_Time: 2023-08-12
+    End_Time: 2024-08-12
+    Time_Interval: "Daily"
+  - Name: "TSLA"
+    Start_Time: 2023-08-12
+    End_Time: 2024-08-12
+    Time_Interval: "Daily"
+  
