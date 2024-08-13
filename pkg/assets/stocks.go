@@ -22,8 +22,6 @@ type Stocks struct {
 func ParseConfig() *Stocks {
 	//read config from local
 	file, err := os.ReadFile("config/config.yaml")
-	// out, err := exec.Command("pwd").Output()
-	// fmt.Println("current work dir is: ", string(out))
 	if err != nil {
 		log.Fatalf("Can't read config.yaml file: %v", err.Error())
 	}
