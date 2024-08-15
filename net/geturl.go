@@ -2,8 +2,6 @@ package net
 
 import (
 	"crypto/tls"
-	"fmt"
-	"io"
 	"log"
 	"net/http"
 	"net/url"
@@ -27,55 +25,43 @@ func SetProxy(URL string) *http.Client {
 	return &http.Client{Transport: transport}
 }
 
-func GetFromUrlByProxy(URL string, ProxyServerUrl string) {
+func GetFromUrlByProxy(URL string, ProxyServerUrl string) (*http.Response, error) {
 	client := SetProxy(ProxyServerUrl)
 	resp, err := client.Get(URL)
 	if err != nil {
-		log.Fatalf("Get URL error from GetFromUrlByProxy: %v", err.Error())
-	}
-	defer resp.Body.Close()
-
-	bodybyte, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatalf("Read from body error: %v", err.Error())
+		return nil, err
 	}
 
-	fmt.Println(string(bodybyte))
+	return resp, nil //一定要close当调用者不用的时候
 }
 
-func GetFromUrl(URL string) {
+func GetFromUrl(URL string) (*http.Response, error) {
 	resp, err := http.Get(URL)
 	if err != nil {
-		log.Fatalf("Get URL error from GetFromUrlByProxy: %v", err.Error())
+		return nil, err
 	}
-	defer resp.Body.Close()
-
-	bodybyte, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatalf("Read from body error: %v", err.Error())
-	}
-
-	fmt.Println(string(bodybyte))
+	//defer resp.Body.Close()
+	return resp, nil //一定要close当调用者不用的时候
 }
 
-func Get(URL string) {
+func Get(URL string) (*http.Response, error) {
 	var proxyset ProxySet
 
 	//read config from local
 	file, err := os.ReadFile("config/config.yaml")
 	if err != nil {
-		log.Fatalf("Can't read config.yaml file: %v", err.Error())
+		return nil, err
 	}
 
 	//parse yaml to struct
 	if err = yaml.Unmarshal(file, &proxyset); err != nil {
-		log.Fatalf("Can't unmarshal yaml file to struct: %v", err.Error())
+		return nil, err
 	}
 
 	//check if use proxy
 	if proxyset.Proxyurl == "" { //not fill proxyurl in yaml
-		GetFromUrl(URL)
+		return GetFromUrl(URL)
 	} else {
-		GetFromUrlByProxy(URL, proxyset.Proxyurl)
+		return GetFromUrlByProxy(URL, proxyset.Proxyurl)
 	}
 }
